@@ -10,6 +10,12 @@ const sampleService: Service = {
   eligibilitySummary: 'Anggota aktif KADIN.',
 };
 
+const inactiveService: Service = {
+  id: 's5', code: 'COO', title: 'Certificate of Origin', description: 'Deskripsi layanan.',
+  status: 'inactive', organizationId: 'org-1', ownerId: 'user-1',
+  eligibilitySummary: 'Anggota aktif KADIN.',
+};
+
 function makeRepository(overrides: Partial<ServiceRepository> = {}): ServiceRepository {
   return {
     list: jest.fn().mockResolvedValue({ data: [sampleService], page: { nextCursor: null, limit: 10 } }),
@@ -63,6 +69,19 @@ describe('ServiceListScreen', () => {
     fireEvent.press(screen.getByText('Coba Lagi'));
     await waitFor(() => expect(screen.getByText('Surat Keterangan Asal')).toBeTruthy());
     expect(list).toHaveBeenCalledTimes(2);
+  });
+
+  it('renders an inactive service alongside active ones instead of filtering it out', async () => {
+    const repository = makeRepository({
+      list: jest.fn().mockResolvedValue({
+        data: [sampleService, inactiveService],
+        page: { nextCursor: null, limit: 10 },
+      }),
+    });
+    render(<ServiceListScreen repository={repository} />);
+    await waitFor(() => expect(screen.getByText('Surat Keterangan Asal')).toBeTruthy());
+    expect(screen.getByText('Certificate of Origin')).toBeTruthy();
+    expect(screen.getByText('Tidak tersedia')).toBeTruthy();
   });
 
   it('does not loop when no repository prop is given (uses a stable default instance)', async () => {
