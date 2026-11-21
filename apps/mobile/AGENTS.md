@@ -1,8 +1,15 @@
 This is an Expo/React Native mobile application. Prioritize mobile-first patterns, performance, and cross-platform compatibility.
 
-## Override: this file's Navigation section is currently blocked
+## Navigation: resolved — do not use Expo Router
 
-**Do not follow the "Navigation & Routing" section below yet.** `../../SAD.md` §15 ADR-002 (Expo Router vs React Navigation) is still **OPEN** — no navigation library decision has been approved. Root `AGENTS.md` §4 requires `src/features/<feature>/...` (not `src/app/`) and states navigation "requires ADR". If documents disagree, root `AGENTS.md` §1 says: "do not silently resolve" — treat this conflict as a reason to ask, not a reason to pick Expo Router by default. This override block stays until ADR-002 is accepted and this note is removed.
+ADR-002 (Expo Router vs React Navigation) is now **ACCEPTED** — see
+`docs/adr/ADR-002-navigation-library.md`. This project uses
+**React Navigation** (`@react-navigation/native-stack`), not Expo Router.
+The "Navigation & Routing" section below (from the Expo template) describes
+Expo Router and does **not** apply to this project — ignore its `src/app/`
+file-based routing instructions. Screens live under
+`src/features/<feature>/screens/`; navigation wiring lives under
+`src/navigation/` per root `AGENTS.md` §4.
 
 The `lint` command below also does not exist yet in this project (no ESLint config or `lint` script committed) — treat it as aspirational until `AGENTS.md` §7's actual checked-in scripts include one.
 

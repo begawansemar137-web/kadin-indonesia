@@ -208,7 +208,7 @@ Environments: local, test/CI, staging, production. Separate IdP clients, secrets
 | ADR | Decision | Default recommendation | Status |
 |---|---|---|---|
 | ADR-001 | Expo managed vs prebuild | Evaluate native module requirements | OPEN |
-| ADR-002 | Expo Router vs React Navigation | Select after navigation validation | OPEN |
+| ADR-002 | Expo Router vs React Navigation | **ACCEPTED: React Navigation** — see `docs/adr/ADR-002-navigation-library.md` | **ACCEPTED** |
 | ADR-003 | Identity provider and account linking | OIDC/PKCE-compatible provider | BLOCKING for live auth |
 | ADR-004 | Membership registry authority and contract | Read-only verified adapter first | BLOCKING for live membership |
 | ADR-005 | QR purpose, verifier, TTL, revocation | Signed short-lived challenge | BLOCKING for live QR |
