@@ -1,20 +1,11 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import type { ReactElement } from 'react';
+import { AppShell } from './src/shared/ui/AppShell';
+import { WelcomeScreen } from './src/features/shell/screens/WelcomeScreen';
 
-export default function App() {
+export default function App(): ReactElement {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <AppShell>
+      <WelcomeScreen />
+    </AppShell>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
