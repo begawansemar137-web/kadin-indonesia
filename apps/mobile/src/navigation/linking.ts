@@ -6,6 +6,8 @@ export const linking: LinkingOptions<RootStackParamList> = {
   config: {
     screens: {
       Home: '',
+      NewsList: 'news',
+      NewsDetail: 'news/:articleId',
     },
   },
 };
