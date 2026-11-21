@@ -5,4 +5,5 @@ export const colors = {
   linkText: '#007a3d',
   mutedText: '#6b6b6b',
   imageFallbackBackground: '#eeeeee',
+  dangerText: '#b00020',
 };

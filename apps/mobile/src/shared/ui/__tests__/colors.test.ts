@@ -34,4 +34,8 @@ describe('WCAG AA contrast (4.5:1 minimum for normal text)', () => {
   it('muted text on the image-fallback background meets AA', () => {
     expect(contrastRatio(colors.mutedText, colors.imageFallbackBackground)).toBeGreaterThanOrEqual(4.5);
   });
+
+  it('danger text on a white background meets AA', () => {
+    expect(contrastRatio(colors.dangerText, '#ffffff')).toBeGreaterThanOrEqual(4.5);
+  });
 });
