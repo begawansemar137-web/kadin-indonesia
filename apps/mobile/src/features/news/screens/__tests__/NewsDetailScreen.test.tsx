@@ -1,5 +1,6 @@
-import { render, screen, waitFor } from '@testing-library/react-native';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react-native';
 import { NewsDetailScreen } from '../NewsDetailScreen';
+import { FixtureNewsRepository } from '../../data/fixtureNewsRepository';
 import type { NewsRepository } from '../../data/newsRepository';
 import type { Article } from '../../domain/types';
 
@@ -50,5 +51,27 @@ describe('NewsDetailScreen', () => {
     const repository = makeRepository({ getById: jest.fn().mockRejectedValue(new Error('network down')) });
     render(<NewsDetailScreen articleId="a1" repository={repository} />);
     await waitFor(() => expect(screen.getByText('Gagal memuat artikel. Silakan coba lagi.')).toBeTruthy());
+  });
+
+  it('retries fetching when the error state retry button is pressed', async () => {
+    const getById = jest
+      .fn()
+      .mockRejectedValueOnce(new Error('network down'))
+      .mockResolvedValueOnce(sampleArticle);
+    const repository = makeRepository({ getById });
+    render(<NewsDetailScreen articleId="a1" repository={repository} />);
+    await waitFor(() => expect(screen.getByText('Gagal memuat artikel. Silakan coba lagi.')).toBeTruthy());
+    fireEvent.press(screen.getByText('Coba Lagi'));
+    await waitFor(() => expect(screen.getByText('Contoh Artikel')).toBeTruthy());
+    expect(getById).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not loop when no repository prop is given (uses a stable default instance)', async () => {
+    const spy = jest.spyOn(FixtureNewsRepository.prototype, 'getById');
+    render(<NewsDetailScreen articleId="a1" />);
+    await waitFor(() => expect(spy).toHaveBeenCalled());
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(spy).toHaveBeenCalledTimes(1);
+    spy.mockRestore();
   });
 });

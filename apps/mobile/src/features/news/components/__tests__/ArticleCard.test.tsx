@@ -20,14 +20,27 @@ describe('ArticleCard', () => {
     expect(screen.getByText('Ringkasan contoh artikel.')).toBeTruthy();
   });
 
-  it('shows an accessible fallback instead of a broken image when imageUrl is missing', () => {
+  it('puts an accessible label on the whole card noting no image is present when imageUrl is missing', () => {
+    // The label lives on the Pressable itself (not on the inner image/fallback
+    // View) because a Pressable groups its children into one accessibility
+    // element by default — a label on a child inside it is unlikely to be
+    // announced at all.
     render(<ArticleCard article={baseArticle} />);
-    expect(screen.getByLabelText('Tidak ada gambar untuk artikel Contoh Artikel')).toBeTruthy();
+    expect(screen.getByLabelText(/Contoh Artikel.*tanpa gambar/)).toBeTruthy();
   });
 
-  it('shows the image with an accessible label when imageUrl is present', () => {
+  it('does not mention "tanpa gambar" in the accessible label when an image is present', () => {
     render(<ArticleCard article={{ ...baseArticle, imageUrl: 'https://example.com/a1.jpg' }} />);
-    expect(screen.getByLabelText('Gambar untuk artikel Contoh Artikel')).toBeTruthy();
+    expect(screen.queryByLabelText(/tanpa gambar/)).toBeNull();
+    expect(screen.getByRole('button')).toBeTruthy();
+  });
+
+  it('falls back to the placeholder and updates the accessible label when the image fails to load', () => {
+    render(<ArticleCard article={{ ...baseArticle, imageUrl: 'https://example.com/broken.jpg' }} />);
+    expect(screen.queryByLabelText(/tanpa gambar/)).toBeNull();
+    fireEvent(screen.getByTestId('article-card-image'), 'error');
+    expect(screen.getByLabelText(/tanpa gambar/)).toBeTruthy();
+    expect(screen.queryByTestId('article-card-image')).toBeNull();
   });
 
   it('calls onPress when tapped', () => {

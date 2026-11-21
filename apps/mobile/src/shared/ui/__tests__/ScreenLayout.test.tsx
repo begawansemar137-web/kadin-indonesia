@@ -1,15 +1,16 @@
-import { render, screen } from '@testing-library/react-native';
+import { render, screen, fireEvent } from '@testing-library/react-native';
 import { Text } from 'react-native';
 import { ScreenLayout } from '../ScreenLayout';
 
 describe('ScreenLayout', () => {
-  it('shows a loading indicator in the loading state', () => {
+  it('shows a loading indicator in the loading state, announced as a progress bar', () => {
     render(
       <ScreenLayout state="loading">
         <Text>content</Text>
       </ScreenLayout>
     );
     expect(screen.getByLabelText('Memuat data')).toBeTruthy();
+    expect(screen.getByRole('progressbar')).toBeTruthy();
   });
 
   it('shows the default error message in the error state', () => {
@@ -55,5 +56,25 @@ describe('ScreenLayout', () => {
       </ScreenLayout>
     );
     expect(screen.queryByText('content')).toBeNull();
+  });
+
+  it('does not show a retry button in the error state when onRetry is not provided', () => {
+    render(
+      <ScreenLayout state="error">
+        <Text>content</Text>
+      </ScreenLayout>
+    );
+    expect(screen.queryByText('Coba Lagi')).toBeNull();
+  });
+
+  it('shows a retry button in the error state and calls onRetry when tapped', () => {
+    const onRetry = jest.fn();
+    render(
+      <ScreenLayout state="error" onRetry={onRetry}>
+        <Text>content</Text>
+      </ScreenLayout>
+    );
+    fireEvent.press(screen.getByText('Coba Lagi'));
+    expect(onRetry).toHaveBeenCalledTimes(1);
   });
 });

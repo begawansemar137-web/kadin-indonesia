@@ -1,5 +1,6 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react-native';
 import { NewsListScreen } from '../NewsListScreen';
+import { FixtureNewsRepository } from '../../data/fixtureNewsRepository';
 import type { NewsRepository } from '../../data/newsRepository';
 import type { Article } from '../../domain/types';
 
@@ -53,5 +54,28 @@ describe('NewsListScreen', () => {
     await waitFor(() => screen.getByText('Contoh Artikel'));
     fireEvent.press(screen.getByRole('button'));
     expect(onSelectArticle).toHaveBeenCalledWith('a1');
+  });
+
+  it('retries fetching when the error state retry button is pressed', async () => {
+    const listPublished = jest
+      .fn()
+      .mockRejectedValueOnce(new Error('network down'))
+      .mockResolvedValueOnce({ data: [sampleArticle], page: { nextCursor: null, limit: 10 } });
+    const repository = makeRepository({ listPublished });
+    render(<NewsListScreen repository={repository} />);
+    await waitFor(() => expect(screen.getByText('Gagal memuat berita. Silakan coba lagi.')).toBeTruthy());
+    fireEvent.press(screen.getByText('Coba Lagi'));
+    await waitFor(() => expect(screen.getByText('Contoh Artikel')).toBeTruthy());
+    expect(listPublished).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not loop when no repository prop is given (uses a stable default instance)', async () => {
+    const spy = jest.spyOn(FixtureNewsRepository.prototype, 'listPublished');
+    render(<NewsListScreen />);
+    await waitFor(() => expect(spy).toHaveBeenCalled());
+    // Give any runaway effect loop a window to fire again before asserting it didn't.
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(spy).toHaveBeenCalledTimes(1);
+    spy.mockRestore();
   });
 });

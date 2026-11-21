@@ -8,20 +8,28 @@ import type { NewsRepository } from '../data/newsRepository';
 
 const PAGE_SIZE = 10;
 
+// Module-scope singleton: a default parameter expression re-evaluates on every
+// render, so `repository = new FixtureNewsRepository()` inline would create a
+// new object identity each render, retrigger the effect below (which depends
+// on `repository`), and loop indefinitely on the no-prop path every route uses.
+const defaultNewsRepository = new FixtureNewsRepository();
+
 export interface NewsListScreenProps {
   repository?: NewsRepository;
   onSelectArticle?: (articleId: string) => void;
 }
 
 export function NewsListScreen({
-  repository = new FixtureNewsRepository(),
+  repository = defaultNewsRepository,
   onSelectArticle,
 }: NewsListScreenProps): ReactElement {
   const [articles, setArticles] = useState<Article[]>([]);
   const [state, setState] = useState<ScreenState>('loading');
+  const [reloadToken, setReloadToken] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
+    setState('loading');
     repository
       .listPublished({ limit: PAGE_SIZE })
       .then((result) => {
@@ -36,10 +44,14 @@ export function NewsListScreen({
     return () => {
       cancelled = true;
     };
-  }, [repository]);
+  }, [repository, reloadToken]);
 
   return (
-    <ScreenLayout state={state} errorMessage="Gagal memuat berita. Silakan coba lagi.">
+    <ScreenLayout
+      state={state}
+      errorMessage="Gagal memuat berita. Silakan coba lagi."
+      onRetry={() => setReloadToken((t) => t + 1)}
+    >
       <FlatList
         data={articles}
         keyExtractor={(item) => item.id}

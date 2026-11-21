@@ -4,9 +4,18 @@ import type { NewsRepository } from './newsRepository';
 import { ARTICLE_FIXTURES } from './newsFixtures';
 
 function sortByPublishedAtDesc(articles: Article[]): Article[] {
+  // A real API can legitimately return a published article with no
+  // publishedAt yet; a comparator that returns 0 for any pair involving null
+  // is non-transitive and leaves ordering implementation-defined (it breaks
+  // Array.prototype.sort's contract). Make the order total: dated articles
+  // first (newest first), undated articles last, ties broken by id so the
+  // result is deterministic regardless of input order.
   return [...articles].sort((a, b) => {
-    if (!a.publishedAt || !b.publishedAt) return 0;
-    return b.publishedAt.localeCompare(a.publishedAt);
+    if (a.publishedAt === null && b.publishedAt === null) return a.id.localeCompare(b.id);
+    if (a.publishedAt === null) return 1;
+    if (b.publishedAt === null) return -1;
+    const byDate = b.publishedAt.localeCompare(a.publishedAt);
+    return byDate !== 0 ? byDate : a.id.localeCompare(b.id);
   });
 }
 

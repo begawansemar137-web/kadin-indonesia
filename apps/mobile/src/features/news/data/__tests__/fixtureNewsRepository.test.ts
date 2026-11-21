@@ -1,5 +1,6 @@
 import { FixtureNewsRepository } from '../fixtureNewsRepository';
 import { ARTICLE_FIXTURES } from '../newsFixtures';
+import type { Article } from '../../domain/types';
 
 describe('FixtureNewsRepository', () => {
   it('only returns published articles from listPublished', async () => {
@@ -12,16 +13,19 @@ describe('FixtureNewsRepository', () => {
     }
   });
 
-  it('paginates across two pages with no duplicates and full coverage', async () => {
+  it('paginates across all pages with no duplicates, no skips, and correct desc-by-publishedAt order', async () => {
     const repo = new FixtureNewsRepository();
-    const publishedCount = ARTICLE_FIXTURES.filter((a) => a.status === 'published').length;
-    const limit = 2;
-    const page1 = await repo.listPublished({ limit });
-    const page2 = await repo.listPublished({ cursor: page1.page.nextCursor, limit });
-    const allIds = [...page1.data, ...page2.data].map((a) => a.id);
-    const uniqueIds = new Set(allIds);
-    expect(uniqueIds.size).toBe(allIds.length);
-    expect(allIds.length).toBeLessThanOrEqual(publishedCount);
+    const expectedIds = ARTICLE_FIXTURES.filter((a) => a.status === 'published')
+      .sort((a, b) => (b.publishedAt ?? '').localeCompare(a.publishedAt ?? ''))
+      .map((a) => a.id);
+    const collectedIds: string[] = [];
+    let cursor: string | null = null;
+    do {
+      const page = await repo.listPublished({ cursor, limit: 2 });
+      collectedIds.push(...page.data.map((a) => a.id));
+      cursor = page.page.nextCursor;
+    } while (cursor);
+    expect(collectedIds).toEqual(expectedIds);
   });
 
   it('getById returns null for an unpublished article id (no draft leakage via id guess)', async () => {
@@ -43,5 +47,17 @@ describe('FixtureNewsRepository', () => {
     const published = ARTICLE_FIXTURES.find((a) => a.status === 'published');
     const result = await repo.getById(published!.id);
     expect(result?.id).toBe(published!.id);
+  });
+
+  it('sorts a published article with a null publishedAt after all dated articles, with a deterministic tiebreak', async () => {
+    const fixtures: Article[] = [
+      { ...ARTICLE_FIXTURES[0], id: 'null-b', publishedAt: null },
+      { ...ARTICLE_FIXTURES[0], id: 'dated-old', publishedAt: '2026-01-01T00:00:00.000Z' },
+      { ...ARTICLE_FIXTURES[0], id: 'null-a', publishedAt: null },
+      { ...ARTICLE_FIXTURES[0], id: 'dated-new', publishedAt: '2026-06-01T00:00:00.000Z' },
+    ];
+    const repo = new FixtureNewsRepository(fixtures);
+    const result = await repo.listPublished({ limit: 10 });
+    expect(result.data.map((a) => a.id)).toEqual(['dated-new', 'dated-old', 'null-a', 'null-b']);
   });
 });

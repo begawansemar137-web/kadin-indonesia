@@ -5,6 +5,10 @@ import { FixtureNewsRepository } from '../data/fixtureNewsRepository';
 import type { Article } from '../domain/types';
 import type { NewsRepository } from '../data/newsRepository';
 
+// Module-scope singleton — see NewsListScreen.tsx for why an inline default
+// parameter here would re-create the repository every render and loop.
+const defaultNewsRepository = new FixtureNewsRepository();
+
 export interface NewsDetailScreenProps {
   articleId: string;
   repository?: NewsRepository;
@@ -12,10 +16,11 @@ export interface NewsDetailScreenProps {
 
 export function NewsDetailScreen({
   articleId,
-  repository = new FixtureNewsRepository(),
+  repository = defaultNewsRepository,
 }: NewsDetailScreenProps): ReactElement {
   const [article, setArticle] = useState<Article | null>(null);
   const [state, setState] = useState<ScreenState>('loading');
+  const [reloadToken, setReloadToken] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -34,13 +39,14 @@ export function NewsDetailScreen({
     return () => {
       cancelled = true;
     };
-  }, [articleId, repository]);
+  }, [articleId, repository, reloadToken]);
 
   return (
     <ScreenLayout
       state={state}
       errorMessage="Gagal memuat artikel. Silakan coba lagi."
       emptyMessage="Artikel tidak ditemukan atau belum dipublikasikan."
+      onRetry={() => setReloadToken((t) => t + 1)}
     >
       {article && (
         <ScrollView contentContainerStyle={styles.container}>
