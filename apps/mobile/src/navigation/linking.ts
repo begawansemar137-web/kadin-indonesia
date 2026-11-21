@@ -8,6 +8,8 @@ export const linking: LinkingOptions<RootStackParamList> = {
       Home: '',
       NewsList: 'news',
       NewsDetail: 'news/:articleId',
+      ServiceList: 'services',
+      ServiceDetail: 'services/:serviceId',
     },
   },
 };

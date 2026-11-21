@@ -14,6 +14,9 @@ export function HomeRoute({ navigation }: Props): ReactElement {
       <Pressable onPress={() => navigation.navigate('NewsList')} style={styles.link} accessibilityRole="button">
         <Text style={styles.linkText}>Lihat Berita</Text>
       </Pressable>
+      <Pressable onPress={() => navigation.navigate('ServiceList')} style={styles.link} accessibilityRole="button">
+        <Text style={styles.linkText}>Lihat Layanan</Text>
+      </Pressable>
     </ScrollView>
   );
 }
