@@ -14,10 +14,10 @@ describe('WelcomeScreen', () => {
     ).toBeTruthy();
   });
 
-  it('exposes an accessibility label for screen readers', () => {
+  it('exposes the heading as an accessible header for screen readers', () => {
     render(<WelcomeScreen />);
     expect(
-      screen.getByLabelText('Halaman selamat datang KADIN Indonesia')
+      screen.getByRole('header', { name: 'Selamat datang di KADIN Indonesia' })
     ).toBeTruthy();
   });
 });

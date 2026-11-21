@@ -3,11 +3,10 @@ import { View, Text, StyleSheet } from 'react-native';
 
 export function WelcomeScreen(): ReactElement {
   return (
-    <View
-      style={styles.container}
-      accessibilityLabel="Halaman selamat datang KADIN Indonesia"
-    >
-      <Text style={styles.heading}>Selamat datang di KADIN Indonesia</Text>
+    <View style={styles.container}>
+      <Text style={styles.heading} accessibilityRole="header">
+        Selamat datang di KADIN Indonesia
+      </Text>
       <Text style={styles.status}>
         Status: tahap pengembangan awal (WP-01 shell) — fitur identitas, membership,
         dan QR belum aktif.

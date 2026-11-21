@@ -1,4 +1,4 @@
-import { Component, ReactNode } from 'react';
+import { Component, ErrorInfo, ReactNode } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 interface AppShellProps {
@@ -14,6 +14,12 @@ export class AppShell extends Component<AppShellProps, AppShellState> {
 
   static getDerivedStateFromError(): AppShellState {
     return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, info: ErrorInfo): void {
+    // Seam for a future crash-reporting integration (e.g. Sentry) — for now,
+    // at minimum the error and component stack must not be lost silently.
+    console.error('[AppShell] uncaught error', error, info.componentStack);
   }
 
   render(): ReactNode {

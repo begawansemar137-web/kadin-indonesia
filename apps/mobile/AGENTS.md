@@ -1,5 +1,11 @@
 This is an Expo/React Native mobile application. Prioritize mobile-first patterns, performance, and cross-platform compatibility.
 
+## Override: this file's Navigation section is currently blocked
+
+**Do not follow the "Navigation & Routing" section below yet.** `../../SAD.md` §15 ADR-002 (Expo Router vs React Navigation) is still **OPEN** — no navigation library decision has been approved. Root `AGENTS.md` §4 requires `src/features/<feature>/...` (not `src/app/`) and states navigation "requires ADR". If documents disagree, root `AGENTS.md` §1 says: "do not silently resolve" — treat this conflict as a reason to ask, not a reason to pick Expo Router by default. This override block stays until ADR-002 is accepted and this note is removed.
+
+The `lint` command below also does not exist yet in this project (no ESLint config or `lint` script committed) — treat it as aspirational until `AGENTS.md` §7's actual checked-in scripts include one.
+
 ## Expo has changed — do not trust your training data
 
 Expo ships breaking changes every SDK release. APIs you remember are likely renamed, moved, or removed. Before writing any code that touches an Expo, EAS, or React Native API:

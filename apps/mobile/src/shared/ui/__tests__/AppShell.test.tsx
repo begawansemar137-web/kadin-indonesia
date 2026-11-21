@@ -29,4 +29,18 @@ describe('AppShell', () => {
     ).toBeTruthy();
     consoleError.mockRestore();
   });
+
+  it('logs the caught error instead of swallowing it silently', () => {
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+    render(
+      <AppShell>
+        <ThrowingChild />
+      </AppShell>
+    );
+    const loggedOwnError = consoleError.mock.calls.some(
+      (call) => typeof call[0] === 'string' && call[0].includes('[AppShell] uncaught error')
+    );
+    expect(loggedOwnError).toBe(true);
+    consoleError.mockRestore();
+  });
 });
