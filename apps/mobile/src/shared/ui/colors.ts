@@ -6,4 +6,5 @@ export const colors = {
   mutedText: '#6b6b6b',
   imageFallbackBackground: '#eeeeee',
   dangerText: '#b00020',
+  cardBorder: '#8c8c8c',
 };

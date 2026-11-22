@@ -20,4 +20,9 @@ describe('WelcomeScreen', () => {
       screen.getByRole('header', { name: 'Selamat datang di KADIN Indonesia' })
     ).toBeTruthy();
   });
+
+  it('renders the KADIN Indonesia logo as an accessible image', () => {
+    render(<WelcomeScreen />);
+    expect(screen.getByRole('image', { name: 'Logo KADIN Indonesia' })).toBeTruthy();
+  });
 });

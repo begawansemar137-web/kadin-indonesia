@@ -39,3 +39,9 @@ describe('WCAG AA contrast (4.5:1 minimum for normal text)', () => {
     expect(contrastRatio(colors.dangerText, '#ffffff')).toBeGreaterThanOrEqual(4.5);
   });
 });
+
+describe('WCAG non-text contrast (3:1 minimum for UI component boundaries)', () => {
+  it('card border on a white background meets the non-text minimum', () => {
+    expect(contrastRatio(colors.cardBorder, '#ffffff')).toBeGreaterThanOrEqual(3);
+  });
+});
