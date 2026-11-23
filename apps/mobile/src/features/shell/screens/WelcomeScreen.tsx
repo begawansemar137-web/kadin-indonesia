@@ -7,6 +7,11 @@ import { colors } from '../../../shared/ui/colors';
 const LOGO_WIDTH = 180;
 const LOGO_HEIGHT = LOGO_WIDTH * (1086 / 1448);
 
+// kadin-verse-lockup.png is 580x80, cropped from the Kadin Verse portal
+// mockup's header — same aspect-ratio-preserving approach as the crest.
+const LOCKUP_WIDTH = 200;
+const LOCKUP_HEIGHT = LOCKUP_WIDTH * (80 / 580);
+
 export function WelcomeScreen(): ReactElement {
   return (
     <View style={styles.container}>
@@ -17,6 +22,14 @@ export function WelcomeScreen(): ReactElement {
         accessible
         accessibilityRole="image"
         accessibilityLabel="Logo KADIN Indonesia"
+      />
+      <Image
+        source={require('../../../../assets/kadin-verse-lockup.png')}
+        style={styles.lockup}
+        resizeMode="contain"
+        accessible
+        accessibilityRole="image"
+        accessibilityLabel="Kadin Verse, Portal Digital Dunia Usaha Indonesia"
       />
       <Text style={styles.heading} accessibilityRole="header">
         Selamat datang di KADIN Indonesia
@@ -39,6 +52,11 @@ const styles = StyleSheet.create({
   logo: {
     width: LOGO_WIDTH,
     height: LOGO_HEIGHT,
+    marginBottom: 16,
+  },
+  lockup: {
+    width: LOCKUP_WIDTH,
+    height: LOCKUP_HEIGHT,
     marginBottom: 16,
   },
   heading: {

@@ -25,4 +25,11 @@ describe('WelcomeScreen', () => {
     render(<WelcomeScreen />);
     expect(screen.getByRole('image', { name: 'Logo KADIN Indonesia' })).toBeTruthy();
   });
+
+  it('renders the Kadin Verse sub-brand lockup below the crest as an accessible image', () => {
+    render(<WelcomeScreen />);
+    expect(
+      screen.getByRole('image', { name: 'Kadin Verse, Portal Digital Dunia Usaha Indonesia' })
+    ).toBeTruthy();
+  });
 });
