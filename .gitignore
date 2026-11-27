@@ -9,3 +9,6 @@ web-build/
 .env.local
 .vercel
 .env*
+
+# Local agent session state (anchor-memory plugin)
+.anchor/
